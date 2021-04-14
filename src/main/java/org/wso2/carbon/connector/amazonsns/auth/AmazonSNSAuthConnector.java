@@ -88,7 +88,11 @@ public class AmazonSNSAuthConnector extends AbstractConnector {
                 payloadStrBuilder.append('"');
                 payloadStrBuilder.append(':');
                 payloadStrBuilder.append('"');
-                payloadStrBuilder.append(entry.getValue());
+                if(entry.getKey().toString().equals("Message")) {
+                    payloadStrBuilder.append(entry.getValue().replace("\"", "\\\""));
+                }else {
+                    payloadStrBuilder.append(entry.getValue());
+                }
                 payloadStrBuilder.append('"');
                 payloadStrBuilder.append(',');
             }
@@ -208,6 +212,10 @@ public class AmazonSNSAuthConnector extends AbstractConnector {
             log.error(AmazonSNSConstants.UNSUPPORTED_ENCORDING_ERROR, exc);
             storeErrorResponseStatus(messageContext, exc, AmazonSNSConstants.UNSUPPORTED_ENCORDING_ERROR_CODE);
             handleException(AmazonSNSConstants.CONNECTOR_ERROR, exc, messageContext);
+        } catch (Exception exc){
+            log.error("Error in AmazonSNSAuthConnector class", exc);
+            storeErrorResponseStatus(messageContext, exc, 1234);
+            handleException("Error in AmazonSNSAuthConnector class", exc, messageContext);
         }
     }
 
